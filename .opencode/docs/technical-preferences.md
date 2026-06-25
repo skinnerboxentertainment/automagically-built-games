@@ -59,6 +59,14 @@
 <!-- Quick reference linking to full ADRs in docs/architecture/ -->
 - [No ADRs yet — use /architecture-decision to create one]
 
+## TypeScript Compiler MCP Server
+
+A `ts-compiler-mcp` server is available at `tools/ts-compiler-mcp/`.
+Provides compiler-backed tools for symbol lookup, type checking, and
+boundary analysis. Run with: `node tools/ts-compiler-mcp/src/index.js`
+from the project root. Configure as an MCP server in your OpenCode or
+Claude Code settings to make tools available to all agents.
+
 ## Engine Specialists
 
 - **Primary**: pixijs-specialist
@@ -72,7 +80,7 @@
 
 | File Extension / Type | Specialist to Spawn |
 |-----------------------|---------------------|
-| Game code (.ts files) | lead-programmer |
+| Game code (.ts files) | lead-programmer (consult ts-reference/ docs, use ts-compiler-mcp tools) |
 | Shader / filter files (.glsl, .wgsl, .ts with Filter) | pixijs-specialist |
 | UI / screen files (.ts in src/ui/) | ui-programmer |
 | Scene / level data (.json) | gameplay-programmer |
