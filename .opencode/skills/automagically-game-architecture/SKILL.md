@@ -224,7 +224,55 @@ Rules:
 
 ---
 
-## 9. Anti-Patterns
+## 10. Graph Integration
+
+Every gameplay system must declare its state machine using the
+`NarrativeDocumentV2Schema` from `@automagically/narrative-core`.
+This enables live graph visualization and cross-system dependency analysis.
+
+### How it works
+
+A `GraphRegistry` singleton at `src/core/graph-registry.ts` collects
+`NarrativeDocument` declarations from all systems at init time.
+
+```typescript
+import { GraphRegistry } from "../core/graph-registry"
+import type { NarrativeDocument } from "@automagically/narrative-core"
+
+const doc: NarrativeDocument = {
+  schema: "NarrativeDocumentV2",
+  metadata: { id: "player", title: "Player", version: "2.0.0", createdAt: "", modifiedAt: "" },
+  environment: {
+    variables: {
+      player_health: { id: "player_health", name: "Health", type: "number", defaultValue: 3, scope: "session" },
+    },
+  },
+  topology: {
+    nodes: {
+      PLAYER_IDLE: { id: "PLAYER_IDLE", sceneId: "player" },
+    },
+    transitions: [],
+  },
+  content: { scenes: {}, arcs: {} },
+  presentation: { scenes: {}, characters: {}, themes: {}, cinematics: {} },
+  runtime: { config: { startNodeId: "PLAYER_IDLE" } },
+  editor: {},
+  audio: { cues: {} },
+  plugins: { registry: {}, state: {} },
+}
+
+GraphRegistry.register("player", doc)
+```
+
+Rules:
+- Every system module registers its own graph at init time.
+- `GraphRegistry.exportJSON()` serializes the combined graph for the viewer.
+- The dev server exposes `/api/graph` that returns the combined graph.
+- The viewer fetches this endpoint during development.
+- At build time, `npm run export-graph` writes the combined graph to
+  `design/game-graph.json` for static analysis.
+
+## 11. Anti-Patterns
 
 Never generate:
 

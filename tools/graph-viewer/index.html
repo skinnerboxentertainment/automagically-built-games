@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Game Graph Viewer</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link rel="stylesheet" href="viewer.css" />
+</head>
+<body>
+  <div id="toolbar">
+    <span id="title">Game Graph Viewer</span>
+    <input id="search" type="text" placeholder="Search nodes..." />
+    <select id="arc-filter">
+      <option value="all">All Systems</option>
+    </select>
+    <button id="btn-analyze">Analyze</button>
+    <button id="btn-export">Export JSON</button>
+    <span id="status">Drop a game-graph.json or connect to dev server</span>
+  </div>
+  <svg id="graph"></svg>
+  <div id="panel" hidden>
+    <div id="panel-header">
+      <span id="panel-title">Details</span>
+      <button id="panel-close">&times;</button>
+    </div>
+    <div id="panel-body"></div>
+  </div>
+  <div id="analysis-panel" hidden></div>
+  <script src="viewer.js"></script>
+</body>
+</html>

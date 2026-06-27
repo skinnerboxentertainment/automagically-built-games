@@ -214,6 +214,21 @@ src/main.ts
 ```
 - `Scene` interface: `enter(): void`, `update(dt: number): void`, `exit(): void`
 
+```typescript
+// src/core/graph-registry.ts
+```
+- Singleton that collects `NarrativeDocument` declarations from all systems
+- `register(systemId: string, doc: NarrativeDocument): void` — called by each
+  system at init time to declare its state machine, variables, and transitions
+- `exportJSON(): NarrativeDocumentV2` — serializes the combined graph as a
+  single `NarrativeDocumentV2` document, merging all registered systems into
+  one topology with cross-system transitions
+- Imports types from `@automagically/narrative-core`
+- The dev server imports `GraphRegistry` and exposes an `/api/graph` endpoint
+  that returns `exportJSON()`
+- The `npm run export-graph` script writes the output to
+  `design/game-graph.json`
+
 ### Scenes (always generated)
 
 ```
@@ -249,6 +264,11 @@ Every generated file must:
 - Read tunable values from `assets/data/gameplay-config.json` — never
   hardcode gameplay constants like speed, health, gravity, or score values
   in source code
+- Register state machine with `GraphRegistry` — every class that has
+  states, transitions, variables, or audio events must declare them as a
+  `NarrativeDocument` and call `GraphRegistry.register("system-id", doc)`
+  at init time. This enables the live graph viewer to reflect the actual
+  runtime system topology.
 
 ### Audio (interface + stub implementation)
 

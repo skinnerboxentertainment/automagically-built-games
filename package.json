@@ -14,12 +14,15 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "postinstall": "cd tools/ts-compiler-mcp && npm install",
-    "sfxr": "tsx tools/audio-pipeline/src/sfxr.ts"
+    "sfxr": "tsx tools/audio-pipeline/src/sfxr.ts",
+    "export-graph": "tsx tools/graph-viewer/export-graph.ts"
   },
   "dependencies": {
+    "@automagically/narrative-core": "*",
     "howler": "^2.2.4",
     "jsfxr": "^1.4.1",
-    "pixi.js": "^8.19.0"
+    "pixi.js": "^8.19.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/howler": "^2.2.13",
