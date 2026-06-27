@@ -243,7 +243,12 @@ Every generated file must:
 - Read input from `InputManager` (never register DOM listeners)
 - Keep state on plain classes (never on Sprite/Container properties)
 - Use delta time for all movement
-- Use seeded RNG from `src/utils/rng.ts` for any randomness
+- Use seeded RNG from `src/utils/rng.ts` for any randomness — every class
+  that uses randomness must accept an optional `rng` parameter seeded from
+  this utility, enabling deterministic testing
+- Read tunable values from `assets/data/gameplay-config.json` — never
+  hardcode gameplay constants like speed, health, gravity, or score values
+  in source code
 
 ### Audio (interface + stub implementation)
 
@@ -304,6 +309,66 @@ Generate spec-specific tests for each gameplay system. Each test must:
 tests/browser/startup.test.ts
 ```
 - Playwright test: load page, wait for canvas, assert visible
+
+### Data (always generated)
+
+```
+assets/data/gameplay-config.json
+```
+- All tunable gameplay values in one file. Every generated gameplay class
+  reads from this config — never hardcoded constants.
+- Schema:
+  ```json
+  {
+    "player_speed": 250,
+    "player_jump_velocity": -500,
+    "player_gravity": 980,
+    "player_health": 3,
+    "invincibility_frames": 1.5,
+    "score_per_gem": 100,
+    "enemy_health": 1,
+    "tile_size": 32,
+    "max_fall_speed": 600
+  }
+  ```
+- Values come from the genre pattern, document spec, or user answers, in
+  priority order. If the spec didn't specify a value, use the genre default.
+- Generate a `Config` loader class in `src/core/config.ts` that reads,
+  validates, and exports this JSON as a typed object.
+
+For genre builds (platformer, top-down, shmup, runner, puzzle), also generate:
+
+```
+assets/data/level-01.json
+```
+- Level layout as a structured JSON file, not hardcoded arrays in source.
+- Schema:
+  ```json
+  {
+    "width": 60,
+    "height": 15,
+    "tile_size": 32,
+    "tiles": [],
+    "spawns": [
+      { "type": "player", "x": 2, "y": 12 },
+      { "type": "enemy", "x": 10, "y": 12, "patrol": [8, 14] },
+      { "type": "collectible", "x": 5, "y": 8, "value": 100 }
+    ],
+    "exit": { "x": 58, "y": 12 }
+  }
+  ```
+- `tiles` is a flat array where each value is a tile type:
+  0 = air, 1 = ground, 2 = platform, 3 = spike
+- Level dimensions are `width × height` tiles. The scene loads this file
+  and renders tiles from the array — no hardcoded positions in scene code.
+- Generation rules (use genre pattern as base, then vary):
+  - Ground row at bottom. Remove blocks for gaps (1-2 tiles wide) every
+    8-15 tiles.
+  - Platforms at varying heights above ground.
+  - Enemies on flat ground sections, spaced at least 5 tiles apart.
+  - Collectibles scattered on platforms and in the air.
+  - Player start: 2 tiles from left edge on ground level.
+  - Exit: last ground tile on right edge.
 
 ### Assets
 

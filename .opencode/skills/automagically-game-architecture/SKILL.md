@@ -168,7 +168,37 @@ Rules:
 
 ---
 
-## 7. Save/Load
+## 7. Audio Communication
+
+Scenes communicate audio events by calling the `AudioManager` directly.
+No event bus or callback pattern is needed.
+
+```typescript
+// In a scene's update() or on a gameplay event:
+import { audioManager } from "../audio/audio-manager"
+
+function onCollectGem(): void {
+  audioManager.playSfx("collect")
+}
+
+function onPlayerHit(): void {
+  audioManager.playSfx("hit")
+}
+
+function onJump(): void {
+  audioManager.playSfx("jump")
+}
+```
+
+Rules:
+- `audioManager` is a singleton import — no dependency injection needed.
+- Scenes call `playSfx(key)` and `playMusic(key)` directly.
+- Audio cleanup is the scene's responsibility (`stopAll()` in `exit()`).
+- The `AudioManager` handles bus routing (music vs SFX), volume, mute, and autoplay policy.
+
+---
+
+## 8. Save/Load
 
 State objects implement `toJSON()` / `fromJSON()`:
 
@@ -194,7 +224,7 @@ Rules:
 
 ---
 
-## 8. Anti-Patterns
+## 9. Anti-Patterns
 
 Never generate:
 
